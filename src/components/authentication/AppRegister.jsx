@@ -23,7 +23,7 @@ export default function AppRegister({ RegisterDrawerOpen, setLoginDrawerOpen, ha
   const [whatsapdata, setwhatsapdata] = React.useState([]);
   const [receivedOtp, setReceivedOtp] = useState(null);
   const [enteredOtp, setEnteredOtp] = useState('');
-  const [_isOtpValid, _setIsOtpValid] = useState(false);
+  const [, _setIsOtpValid] = useState(false);
   const [showOtpInput, setShowOtpInput] = useState(false);
  
   // Error state for validation

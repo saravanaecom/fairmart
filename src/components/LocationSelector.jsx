@@ -23,17 +23,6 @@ const LocationSelector = () => {
 
   const [currentLocation, setCurrentLocation] = useState(defaultLocation);
 
-  useEffect(()=>{
-    navigator.geolocation.getCurrentPosition((position)=>{
-
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      setLatitude(position.coords.latitude)
-      setLongitude(position.coords.longitude)
-      updateLocation(lat, lng);
-    })
-
-    },[updateLocation])
 
 
   useEffect(() => {
@@ -89,7 +78,7 @@ const LocationSelector = () => {
     catch (error) {
       console.error("Error fetching address:", error);
     }
-  }  );
+  } ,[setLocation]);
 
   const updateLocation = useCallback((lat, lng) => {
     const updatedLocation = { ...currentLocation, lat, lng };
@@ -102,6 +91,19 @@ const LocationSelector = () => {
     const lng = event.latLng.lng();
     updateLocation(lat, lng);
   };
+
+
+  useEffect(()=>{
+    navigator.geolocation.getCurrentPosition((position)=>{
+
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      setLatitude(position.coords.latitude)
+      setLongitude(position.coords.longitude)
+      updateLocation(lat, lng);
+    })
+
+    },[updateLocation])
 
   return (
     <div>
