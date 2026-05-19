@@ -84,10 +84,12 @@ const LocationSelector = () => {
         setCurrentLocation(newLocation); // Update local state
         setLocation(newLocation); // Update context state
       }
-    } catch (error) {
+    } 
+    
+    catch (error) {
       console.error("Error fetching address:", error);
     }
-  };
+  }  );
 
   const updateLocation = useCallback((lat, lng) => {
     const updatedLocation = { ...currentLocation, lat, lng };
