@@ -350,27 +350,31 @@ const ProductList = () => {
 
   // Apply filtering logic whenever the product list or filter name changes
   useEffect(() => {
-    if (!productLists.length) return;
-  
-    let sortedProducts = [...productLists];
-    switch (productFilterName) {
-      case "Price(Low > High)":
-        sortedProducts.sort((a, b) => a.Price - b.Price);
-        break;
-      case "Price(High > Low)":
-        sortedProducts.sort((a, b) => b.Price - a.Price);
-        break;
-      case "A-Z":
-        sortedProducts.sort((a, b) => a.Description.localeCompare(b.Description));
-        break;
-      case "Z-A":
-        sortedProducts.sort((a, b) => b.Description.localeCompare(a.Description));
-        break;
-      default:
-        break;
-    }
-  
-    setProductLists(sortedProducts);
+    setProductLists(prevProductLists => {
+      if (!prevProductLists.length) return prevProductLists;
+    
+      let sortedProducts = [...prevProductLists];
+      switch (productFilterName) {
+        case "Price(Low > High)":
+          sortedProducts.sort((a, b) => a.Price - b.Price);
+          break;
+        case "Price(High > Low)":
+          sortedProducts.sort((a, b) => b.Price - a.Price);
+          break;
+        case "A-Z":
+          sortedProducts.sort((a, b) => a.Description.localeCompare(b.Description));
+          break;
+        case "Z-A":
+          sortedProducts.sort((a, b) => b.Description.localeCompare(a.Description));
+          break;
+        default:
+          return prevProductLists;
+      }
+      
+      // Prevent unnecessary re-renders if the array hasn't really changed
+      // (Though returning a new array reference triggers a render anyway, this keeps logic same as before)
+      return sortedProducts;
+    });
   }, [productFilterName]);
   
 
