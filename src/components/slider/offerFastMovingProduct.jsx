@@ -18,7 +18,7 @@ const OfferFastMovingProduct = (props) => {
       try {
           const objLists = await API_FetchOfferFastMovingProduct();
           const sortedProducts = objLists.sort((a, b) => a.SaleRate - b.SaleRate);
-          setProductLists(objLists);
+          setProductLists(sortedProducts);
       } catch (error) {
           console.error("Error fetching categories:", error);
       } finally {

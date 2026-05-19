@@ -9,7 +9,6 @@ const CategoryCards = () => {
     const navigate = useNavigate();
     const theme = useTheme();
     const [categoryLists, setCategoryLists] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
 
     const handleCategoryClickChange = (event, id, newValue) => {
         const selectedCategoryId = event.currentTarget.id;
@@ -20,9 +19,7 @@ const CategoryCards = () => {
         try {
             const categoryList = await API_FetchCategory();
             setCategoryLists(categoryList.slice(0, 5)); // Show only the first 5 categories
-            setIsLoading(false);
         } catch (error) {
-            setIsLoading(false);
             console.error('Error fetching categories:', error);
         }
     };

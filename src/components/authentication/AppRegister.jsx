@@ -23,7 +23,7 @@ export default function AppRegister({ RegisterDrawerOpen, setLoginDrawerOpen, ha
   const [whatsapdata, setwhatsapdata] = React.useState([]);
   const [receivedOtp, setReceivedOtp] = useState(null);
   const [enteredOtp, setEnteredOtp] = useState('');
-  const [isOtpValid, setIsOtpValid] = useState(false);
+  const [_isOtpValid, _setIsOtpValid] = useState(false);
   const [showOtpInput, setShowOtpInput] = useState(false);
  
   // Error state for validation
@@ -198,7 +198,7 @@ export default function AppRegister({ RegisterDrawerOpen, setLoginDrawerOpen, ha
   // Function to submit OTP and verify
   const handleOtpSubmit = async () => {
     if (receivedOtp.toString() === enteredOtp) {
-      setIsOtpValid(true);
+      _setIsOtpValid(true);
   
       try {
         // OTP is valid, proceed with registration
@@ -228,7 +228,7 @@ export default function AppRegister({ RegisterDrawerOpen, setLoginDrawerOpen, ha
         setShowErrorMsg("An error occurred during registration.");
       }
     } else {
-      setIsOtpValid(false);
+      _setIsOtpValid(false);
       setShowErrorMsg("Invalid OTP. Please try again.");
     }
   };

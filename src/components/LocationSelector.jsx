@@ -10,7 +10,7 @@ const containerStyle = {
 };
 
 const LocationSelector = () => {
-  const { setLocation, location } = useContext(LocationContext);
+  const { setLocation } = useContext(LocationContext);
   const [latitude, setLatitude ] = useState('');
   const [longitude, setLongitude] = useState('');
   const defaultLocation = {
@@ -33,7 +33,7 @@ const LocationSelector = () => {
       updateLocation(lat, lng);
     })
 
-    },[])
+    },[updateLocation])
 
 
   useEffect(() => {
@@ -41,24 +41,9 @@ const LocationSelector = () => {
     setLocation(currentLocation); // Update context
   }, [currentLocation, setLocation]);
 
-  const getUserLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          updateLocation(lat, lng);
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
-  };
+  // getUserLocation function removed - was unused
 
-  const getAddressFromCoords = async (lat, lng) => {
+  const getAddressFromCoords = useCallback(async (lat, lng) => {
     try {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}`
@@ -108,7 +93,7 @@ const LocationSelector = () => {
     const updatedLocation = { ...currentLocation, lat, lng };
     setCurrentLocation(updatedLocation);
     getAddressFromCoords(lat, lng);
-  }, [currentLocation]);
+  }, [currentLocation, getAddressFromCoords]);
 
   const handleMapClick = (event) => {
     const lat = event.latLng.lat();

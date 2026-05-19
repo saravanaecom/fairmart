@@ -13,16 +13,13 @@ const Banner = () => {
   const gifRef = useRef(null);
   const overlayRef = useRef(null);
   const [bannerSliderLists, setBannerSliderLists] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const GetBannerSliderLists = async () => {
     try {
       const bannerList = await API_FetchBannerOfferPost();
       setBannerSliderLists(bannerList);
-      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching categories:", error);
-      setIsLoading(false);
     }
   };
 
@@ -183,7 +180,9 @@ const Banner = () => {
   }, []);
 
 
-  const handleButtonHover = (enter) => {
+  // handleButtonHover function removed - was unused
+
+  const _handleButtonHover = (enter) => {
     gsap.to(buttonRef.current, {
       scale: enter ? 1.1 : 1,
       duration: 0.3,
@@ -250,6 +249,7 @@ const Banner = () => {
         }}
       >
         <iframe
+          title="Giphy embedded content"
           src="https://giphy.com/embed/kG43Pr7YB5jDtjQKs3"
           width="100%"
           height="100%"

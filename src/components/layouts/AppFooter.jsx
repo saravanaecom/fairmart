@@ -1,13 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Grid, Box, Typography, Button, List, ListItem, ListItemText } from '@mui/material';
-import { Instagram, Twitter, Facebook, LinkedIn } from '@mui/icons-material';
+import { Facebook } from '@mui/icons-material';
 import AppLogo from '../logo/AppLogo';
 import PlayStrore from '../../assets/play-store.svg';
-import AppStrore from '../../assets/app-store.svg';
 import { useTheme } from '@mui/material/styles';
 import { ServerURL } from '../../server/serverUrl';
-import { QrCode  } from '@mui/icons-material';
 import QrImg from '../../assets/FairMart.png'
 
 const AppFooter = ({ CompanyDetails }) => {

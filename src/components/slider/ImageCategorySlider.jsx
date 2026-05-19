@@ -40,7 +40,7 @@ export default function ImageCategorySlider({ CategoryImageLists = [] }) {
               <img
                 className="w-full h-64 object-cover rounded-lg"
                 src={ImagePathRoutes.CategoryImagePath + img}
-                alt={`Image ${index + 1}`}
+                alt={`Category ${index + 1}`}
               />
               <Box
                 className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-t from-black to-transparent opacity-50"
