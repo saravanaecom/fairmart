@@ -1,4 +1,3 @@
-import { ConstructionOutlined } from '@mui/icons-material';
 import APIRoutes from '../routes/APIRoutes';
 import {ServerURL} from '../server/serverUrl';
 

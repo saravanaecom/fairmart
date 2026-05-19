@@ -387,7 +387,7 @@ const ProductList = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [productLists, loading, PageCount]);
+  }, [loading, PageCount]);
 
 
 

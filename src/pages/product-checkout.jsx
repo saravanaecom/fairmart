@@ -236,7 +236,7 @@ export default function ProductCheckout() {
     // Example: setting distance to 11 and finding delivery charge
     React.useEffect(() => {
         findDeliveryCharge();
-    }, [distance]); 
+    }, [distance, findDeliveryCharge]); 
 
     const FetchPincode = async () => {
         try {
@@ -284,7 +284,7 @@ export default function ProductCheckout() {
         if (selectedAddress) {
             handleCalculateDistance();
         }
-    }, [selectedAddress,adminlatitude,adminLangitude]);
+    }, [selectedAddress, adminlatitude, adminLangitude, handleCalculateDistance]);
     
     useEffect(() => {
         if (cartItems.length > 0) {
@@ -381,17 +381,17 @@ export default function ProductCheckout() {
             setInfoStatus('Please select date');
             handleAlertOpen(true);
         }
-          if (COD ==1 && PaymentType === '' && gstNumber === 0 && gstNumber === null) {
+          if (COD === 1 && PaymentType === '' && (gstNumber === 0 || gstNumber === null)) {
             setInfoStatus('Please choose payment type');
             handleAlertOpen(true);
         }
         else {
-            if(COD ==1 && PaymentType === 'COD' || gstNumber == 1){
+            if((COD === 1 && PaymentType === 'COD') || gstNumber === 1){
                 setOnlinePayment(false);
                 setAlertOpen(false);
                 PlaceOrder(0, '');
             }
-            else if(COD ==0 && PaymentType === '' && gstNumber == 0 ){
+            else if(COD === 0 && PaymentType === '' && gstNumber === 0 ){
                 setOnlinePayment(false);
                 setAlertOpen(false);
                 PlaceOrder(0, '');
@@ -664,7 +664,7 @@ export default function ProductCheckout() {
                                 Payment
                             </Typography>
                             <RadioGroup>
-                              {(gstNumber === '0' || gstNumber === null && COD === 0 ) && ( <FormControlLabel value="PayOnline" control={<Radio onChange={() => handlePaymentType('PayOnline')} size="small" />} label="Pay Online" />)}
+                              {(gstNumber === '0' || (gstNumber === null && COD === 0)) && ( <FormControlLabel value="PayOnline" control={<Radio onChange={() => handlePaymentType('PayOnline')} size="small" />} label="Pay Online" />)}
                               {(COD === 1 || gstNumber === '1')  && ( <FormControlLabel value="COD"control={<Radio onChange={() => handlePaymentType("COD")} size="small" />}label="Cash on Delivery"/>)}
                             </RadioGroup>
 

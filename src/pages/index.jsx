@@ -1,14 +1,12 @@
 import { Container, IconButton } from '@mui/material';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
-import Banner from "../components/banner/banner";
 import BannerSlider from "../components/slider/BannerSlider";
 import ImageCategorySlider from "../components/slider/ImageCategorySlider";
 import OfferFastMovingProduct from "../components/slider/offerFastMovingProduct";
 import ProductByIndexPage from '../components/slider/productByIndexPage';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CategoryCard from '../components/category/categoryhome';
-import ProductBycategory from '../components/slider/ProductByCategory';
 import TopOfferShow from '../components/TopOfferShow'
 
 const ScrollSection = ({ children }) => {

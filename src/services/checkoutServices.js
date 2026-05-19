@@ -1,4 +1,3 @@
-import { body } from 'framer-motion/client';
 import APIRoutes from '../routes/APIRoutes';
 import {ServerURL} from '../server/serverUrl';
 

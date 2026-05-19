@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, Box, Divider } from '@mui/material';
+import { Typography, Box, Divider } from '@mui/material';
 
 export default function TermsAndConditions() {
     return (
