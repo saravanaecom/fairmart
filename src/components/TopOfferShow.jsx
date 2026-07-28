@@ -66,6 +66,10 @@ const TopOfferShow = () => {
         ],
     };
 
+    if (!isLoading && ToppostLists.length === 0) {
+        return null;
+    }
+
     return (
         <Box sx={{ position: "relative", overflow: "hidden", width: "100%", p: 2 }}>
             <Typography
@@ -77,7 +81,7 @@ const TopOfferShow = () => {
                     color: "#333",
                 }}
             >
-                TOP OFFERS
+                TOP Products
             </Typography>
 
             {isLoading ? (

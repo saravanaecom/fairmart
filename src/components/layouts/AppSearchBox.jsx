@@ -43,7 +43,7 @@ const AppSearchBox = () => {
   };
 
   return (
-    <div style={{ width: 'auto', margin: '0 auto', padding: '20px' }}>
+    <div style={{ width: '100%', margin: '0 auto' }}>
       <Autocomplete
         freeSolo
         options={searchLists}
@@ -57,17 +57,19 @@ const AppSearchBox = () => {
           variant="outlined"
           sx={{
             borderRadius: '25px',
-            backgroundColor: '#f5f5f5',
+            backgroundColor: '#ffffff',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
             '& .MuiOutlinedInput-root': {
               borderRadius: '25px',
+              backgroundColor: '#ffffff',
               '& fieldset': {
-                borderColor: '#1709b3',
+                borderColor: 'transparent',
               },
               '&:hover fieldset': {
-                borderColor: '#03129c',
+                borderColor: 'rgba(0,0,0,0.1)',
               },
               '&.Mui-focused fieldset': {
-                borderColor: '#81c784',
+                borderColor: '#e63946',
               },
             },
             '& .MuiInputLabel-root': {

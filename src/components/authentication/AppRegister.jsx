@@ -1,17 +1,16 @@
 import React, { useState,useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import { TextField, Button, Typography, Link, IconButton, InputAdornment ,CircularProgress} from '@mui/material';
+import { TextField, Button, Typography, Link, IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import AppLogo from '../logo/AppLogo';
 import {ServerURL} from '../../server/serverUrl';
 import {useAuth} from '../../context/authContext';
 import { useTheme } from '@mui/material/styles';
 import CircularLoader from '../../components/circular-loader';
-import { API_FetchSelectSettingsNew } from '../../services/settings';
 
 //API's
-import { checkExistingUser, registerUser,otpverification } from '../../services/userServices';
+import { checkExistingUser, registerUser } from '../../services/userServices';
 
 export default function AppRegister({ RegisterDrawerOpen, setLoginDrawerOpen, handleAuthDrawerToggle }) {
   const theme = useTheme();
@@ -20,11 +19,7 @@ export default function AppRegister({ RegisterDrawerOpen, setLoginDrawerOpen, ha
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [ShowErrorMsg, setShowErrorMsg] = useState('');
-  const [whatsapdata, setwhatsapdata] = React.useState([]);
-  const [receivedOtp, setReceivedOtp] = useState(null);
-  const [enteredOtp, setEnteredOtp] = useState('');
-  const [, _setIsOtpValid] = useState(false);
-  const [showOtpInput, setShowOtpInput] = useState(false);
+
  
   // Error state for validation
   const [errors, setErrors] = useState({});
@@ -39,10 +34,7 @@ export default function AppRegister({ RegisterDrawerOpen, setLoginDrawerOpen, ha
   }); 
 
 
-  useEffect(() => {
-     
-    FetchSelectSettingsNew();   
-}, []);
+
   // Handle input change
   const handleChange = (e) => {
     setFormData({
@@ -119,119 +111,46 @@ export default function AppRegister({ RegisterDrawerOpen, setLoginDrawerOpen, ha
     return Object.keys(tempErrors).length === 0;
   };
  
-  const FetchSelectSettingsNew = async () => {
-    try {
-
-
-        const list = await API_FetchSelectSettingsNew();
-  
-
-        if (Array.isArray(list) && list.length > 0) {
-            setwhatsapdata(list); 
-    
-        } else {
-            console.error("Fetched data is not a valid array or is empty.");
-            setwhatsapdata([]); 
-        }
-    } catch (error) {
-        setwhatsapdata([]);
-        console.error("Error fetching categories:", error);
-    }
-};
 
 
 
 
 
-  // Check if email or mobile number already exists
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let WhatsAppUrl = "";
-    var mobileno = formData.mobileNumber.toString();
-  
     if (!validate()) return;
     setShowLoader(true);
-  
     try {
-      const existingUser = await checkExistingUser(formData.email, formData.mobileNumber); 
-  
+      const existingUser = await checkExistingUser(formData.email, formData.mobileNumber);
       if (existingUser.length !== 0) {
         setErrors((prevErrors) => ({ ...prevErrors, email: "Email or Mobile numbers are already in use" }));
         setShowLoader(false);
         return;
       }
-  
-      // Check WhatsApp data
-      if (whatsapdata.length > 0) {
-        ({ WhatsAppUrl } = whatsapdata[0]);
-      }
-  
-      // Request OTP
-      const otpresponse = await otpverification(WhatsAppUrl, mobileno);
-  
-      if (otpresponse) {
-        // OTP verification is successful, show input for OTP
-
-        const otpString = otpresponse.toString();
-        setReceivedOtp(otpString);  // OTP received from backend
-        setShowOtpInput(true);  // Show OTP input field
-        setShowLoader(false);  // Hide loader
-  
+      const response = await registerUser(objList);
+      if (response.Id !== 0 && response.Id !== undefined) {
+        localStorage.setItem("userLogin", 'true');
+        localStorage.setItem("userId", btoa(response.Id));
+        localStorage.setItem("userName", btoa(response.CustomerName));
+        localStorage.setItem("userMobileNo", btoa(response.MobileNo));
+        localStorage.setItem("userEmail", btoa(response.Email));
+        setIsAuthenticated(true);
+        setIsAuthenticatedName(response.CustomerName);
+        handleAuthDrawerToggle(false);
+        setLoginDrawerOpen(false);
       } else {
-        setShowLoader(false);
-        setShowErrorMsg("Failed to send OTP. Please try again.");
+        setShowErrorMsg("Registration failed.");
       }
-  
     } catch (error) {
-      console.log("Error:", error);
+      console.error("Error:", error);
+      setShowErrorMsg("An error occurred during registration.");
+    } finally {
       setShowLoader(false);
-      handleAuthDrawerToggle(false); 
-      setLoginDrawerOpen(false); 
     }
   };
   
-  // Function to handle OTP input change
-  const handleOtpInputChange = (e) => {
-    setEnteredOtp(e.target.value);
-  };
-  
-  // Function to submit OTP and verify
-  const handleOtpSubmit = async () => {
-    if (receivedOtp.toString() === enteredOtp) {
-      _setIsOtpValid(true);
-  
-      try {
-        // OTP is valid, proceed with registration
-        const response = await registerUser(objList);
-  
-        if (response.Id !== 0 && response.Id !== undefined) {
-          // Store user info in localStorage
-          localStorage.setItem("userLogin", 'true');
-          localStorage.setItem("userId", btoa(response.Id));
-          localStorage.setItem("userName", btoa(response.CustomerName));
-          localStorage.setItem("userMobileNo", btoa(response.MobileNo));
-          localStorage.setItem("userEmail", btoa(response.Email));
-  
-          // Set authenticated state
-          setIsAuthenticated(true);
-          setIsAuthenticatedName(response.CustomerName);
-  
-          // Close authentication drawer
-          handleAuthDrawerToggle(false);
-          setLoginDrawerOpen(false);
-  
-        } else {
-          setShowErrorMsg("Registration failed.");
-        }
-      } catch (error) {
-        console.error("Registration Error:", error);
-        setShowErrorMsg("An error occurred during registration.");
-      }
-    } else {
-      _setIsOtpValid(false);
-      setShowErrorMsg("Invalid OTP. Please try again.");
-    }
-  };
+
   
 
 
@@ -309,47 +228,7 @@ export default function AppRegister({ RegisterDrawerOpen, setLoginDrawerOpen, ha
                   required
                 />
                     
-                  {/* OTP Input Box */}
-          {showOtpInput && (
-            <div>
-              <TextField
-                fullWidth
-                label="Enter OTP"
-                variant="outlined"
-                margin="normal"
-                value={enteredOtp}
-                onChange={handleOtpInputChange}
-                error={!!ShowErrorMsg}
-                helperText={ShowErrorMsg || ''}
-                InputLabelProps={{ shrink: true }}
-                className="mb-4"
-                required
-              />
-              <Button 
-                fullWidth
-                variant="contained"
-                sx={{
-                  my: 3,
-                  backgroundColor: theme.palette.basecolorCode.main,
-                  color: theme.palette.whitecolorCode.main,
-                  '&:hover': {
-                    backgroundColor: theme.palette.basecolorCode.main,
-                    color: theme.palette.whitecolorCode.main,
-                  },
-                }}
-                onClick={handleOtpSubmit}
-              >
-                Verify OTP
-              </Button>
-            </div>
-          )}
 
-          {/* Loader while processing */}
-          {showLoader && (
-            <div className="flex justify-center mt-4">
-              <CircularProgress />
-            </div>
-          )}
               
                 <TextField
                   fullWidth

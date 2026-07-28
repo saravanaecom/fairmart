@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Badge, AppBar, Toolbar, Grid, IconButton, Button, Typography, Drawer, List, ListItem, ListItemText } from '@mui/material';
+import { Box, Badge, AppBar, Toolbar, Grid, IconButton, Button, Typography, Drawer, List, ListItem, ListItemText } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
@@ -129,14 +129,15 @@ export default function AppHeader() {
         elevation={isScrolled ? 5 : 4}
 
         sx={{
-          borderBottom: isScrolled ? 'none' : '1px solid rgba(255, 255, 255, 0.18)',
-          backgroundColor: '#d62828',
-          backgroundImage: 'linear-gradient(180deg, rgba(214,40,40,0.98) 0%, rgba(246,147,31,0.12) 100%)',
+          borderBottom: isScrolled ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
+          backgroundColor: '#e63946', // Modern sleek red
           transition: 'background-color 0.5s ease, box-shadow 0.3s ease',
-          boxShadow: isScrolled ? '0 6px 18px rgba(0, 0, 0, 0.18)' : 'none',
+          boxShadow: isScrolled ? '0 8px 24px rgba(0, 0, 0, 0.12)' : 'none',
           zIndex: 9,
           top: 0,
-          height: '70px',
+          height: '75px',
+          display: 'flex',
+          justifyContent: 'center',
           color: '#ffffff',
           '@media (max-width: 600px)': {
             position: 'relative',
@@ -177,13 +178,12 @@ export default function AppHeader() {
             </Grid>
 
             {/* Navigation and User Action Section */}
-            <Grid item xs={6} sm={3} md={5} sx={{ display: { xs: 'none', sm: 'flex' }, justifyContent: 'flex-end', alignItems: 'center', gap: '30px' }}>
-              <Button sx={{ color: '#FFF', textTransform: 'none', display: { xs: 'none', md: 'block' } }}>
-                <Typography component={"p"} sx={{ fontFamily: 'inherit', fontWeight: 600 }}>WhatsApp Only<br />
-                <span style={{fontSize: 14}}>+916597236749</span>
-                </Typography>
-              </Button>
-              <Button sx={{ color: '#333', fontWeight: 600, fontFamily: 'inherit', textTransform: 'none', display: { xs: 'none', md: 'none' } }}><Link to={"/"}>Home</Link></Button>
+            <Grid item xs={6} sm={3} md={5} sx={{ display: { xs: 'none', sm: 'flex' }, justifyContent: 'flex-end', alignItems: 'center', gap: '20px' }}>
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column', alignItems: 'flex-start', mr: 2 }}>
+                <Typography sx={{ fontFamily: 'inherit', fontWeight: 500, fontSize: '0.8rem', opacity: 0.9 }}>WhatsApp Only</Typography>
+                <Typography sx={{ fontFamily: 'inherit', fontWeight: 700, fontSize: '1rem' }}>+91 98409 83892</Typography>
+              </Box>
+              <Button sx={{ color: '#333', fontWeight: 600, fontFamily: 'inherit', textTransform: 'none', display: 'none' }}><Link to={"/"}>Home</Link></Button>
               {!isAuthenticated && (
                 <>
                   <Button

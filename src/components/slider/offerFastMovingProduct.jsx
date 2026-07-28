@@ -117,7 +117,7 @@ const OfferFastMovingProduct = (props) => {
           <Skeleton variant="text" height={40} width="30%" />
         ) : (
           <CategoryHeader
-            CategoryHeading="Offer products for you"
+            CategoryHeading="Top product"
             categoryId="offer_product"
             categoryValue="Offer Products"
           />

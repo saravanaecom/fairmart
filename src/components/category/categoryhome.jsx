@@ -28,6 +28,10 @@ const CategoryCards = () => {
         fetchCategoryLists();
     }, []);
 
+    if (categoryLists.length === 0) {
+        return null;
+    }
+
     return (
         <Box className="p-4">
             <Typography

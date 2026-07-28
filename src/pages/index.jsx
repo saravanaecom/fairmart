@@ -2,7 +2,6 @@ import { Container, IconButton } from '@mui/material';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 import BannerSlider from "../components/slider/BannerSlider";
-import ImageCategorySlider from "../components/slider/ImageCategorySlider";
 import OfferFastMovingProduct from "../components/slider/offerFastMovingProduct";
 import ProductByIndexPage from '../components/slider/productByIndexPage';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -70,9 +69,6 @@ export default function HomePage() {
 
                     <CategoryCard />
                     <ProductByIndexPage />
-         
-                    <ImageCategorySlider />
-                  
 
                     {/* Scroll to Top Button */}
                     {isVisible && (

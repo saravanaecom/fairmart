@@ -145,6 +145,10 @@ const ProductByIndexPage = (props) => {
     };
   };
 
+  if (!loading && categoryLists.length === 0) {
+    return null;
+  }
+
   return (
     <Container maxWidth="xl" sx={{ pt: 1, pb: 1, px: { xs: 0, sm: 0, lg: 3 } }}>
       {loading ? (

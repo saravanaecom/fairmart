@@ -56,6 +56,10 @@ export default function BannerSlider() {
     arrows: false,
   };
 
+  if (!isLoading && bannerSliderLists.length === 0) {
+    return null;
+  }
+
   return (
     <Container maxWidth="xl" sx={{ pt: 2, pb: 2 }}>
       <SliderWrapper>

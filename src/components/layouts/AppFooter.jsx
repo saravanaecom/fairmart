@@ -77,7 +77,7 @@ const AppFooter = ({ CompanyDetails }) => {
                                 </Typography>
                             </Box>
                             <Box>
-                                <Typography component={'p'} sx={{ mt: 1, color: theme.palette.footertextcolorCode.main }}>Mobile:+91 6597236749</Typography>
+                                <Typography component={'p'} sx={{ mt: 1, color: theme.palette.footertextcolorCode.main }}>Mobile:+91 9840983892</Typography>
                             </Box>
                             <Box>
                                 <Typography component={'p'} sx={{ mt: 1, color: theme.palette.footertextcolorCode.main }}>Email: customercare@FairMart.com</Typography>
