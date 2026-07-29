@@ -73,14 +73,14 @@ const AppFooter = ({ CompanyDetails }) => {
                             <Typography sx={{ color: theme.palette.footertextcolorCode.main, borderBottom: `2px solid ${theme.palette.basecolorCode.main}`, display: 'inline' }} fontWeight={600} variant={'h5'}>Official info:</Typography>
                             <Box display="flex" gap={2}>
                                 <Typography component={'p'} sx={{ mt: 1, color: theme.palette.footertextcolorCode.main }} className="text-sm sm:text-base lg:text-lg">
-                                    {ServerURL.COMPANY_ADDRESS}
+                                    No198/200, Nehru Bazaar, Sivagangai - 630561
                                 </Typography>
                             </Box>
                             <Box>
-                                <Typography component={'p'} sx={{ mt: 1, color: theme.palette.footertextcolorCode.main }}>Mobile:+91 9840983892</Typography>
+                                <Typography component={'p'} sx={{ mt: 1, color: theme.palette.footertextcolorCode.main }}>Mobile: +91 9840983892</Typography>
                             </Box>
                             <Box>
-                                <Typography component={'p'} sx={{ mt: 1, color: theme.palette.footertextcolorCode.main }}>Email: customercare@FairMart.com</Typography>
+                                <Typography component={'p'} sx={{ mt: 1, color: theme.palette.footertextcolorCode.main }}>Email: fairmartsvg@gmail.com</Typography>
                             </Box>
                         </Grid>
 

@@ -185,6 +185,10 @@ export default function ProductCheckout() {
     
              
     const handleCalculateDistance = React.useCallback(() => {
+        if (!selectedAddress || !selectedAddress.Latitude || !selectedAddress.Langitude || !adminlatitude || !adminLangitude) {
+            setDistance(0);
+            return;
+        }
      
         setUserlatitude(selectedAddress.Latitude);
         setuserLangitude( selectedAddress.Langitude);
