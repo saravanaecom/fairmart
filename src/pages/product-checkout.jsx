@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Link, Modal, Container, TextField, Button, CircularProgress, Typography, Grid, Box, RadioGroup, FormControlLabel, Radio, Divider } from '@mui/material';
+import { Link, Modal, Container, TextField, Button, CircularProgress, Typography, Grid, Box, Paper, RadioGroup, FormControlLabel, Radio, Divider } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useCart } from '../context/CartContext';
 import { ServerURL } from '../server/serverUrl';
@@ -68,7 +68,7 @@ export default function ProductCheckout() {
     const handleAlertOpen = () => setAlertOpen(true);
     const [adminlatitude, setAdminlatitude] = React.useState('');
     const [adminLangitude, setAdminLangitude] = React.useState('');
-    const  [COD ,setCod]= React.useState(1);
+    const  [COD ,setCod]= React.useState(ServerURL.COD);
     const [userlatitude, setUserlatitude] = React.useState('');
     const [userLangitude, setuserLangitude] = React.useState('');
     const [distance, setDistance] =  React.useState(0);
@@ -82,6 +82,10 @@ export default function ProductCheckout() {
         }
         setAlertOpen(false);
     };
+
+    const address = selectedAddress || {};
+    const totalPayable = Number(TotalPrice) + Number(deliverycharge) + Number(HandlingCharge) - Number(ExtraDiscount);
+    const formattedTotalPayable = totalPayable.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     const handleChangeAddress = () => {
         let userLogin = localStorage.getItem("userLogin");
@@ -377,6 +381,15 @@ export default function ProductCheckout() {
 
     //Place order function
     const handlePlaceOrder = async() => {          
+        if (DeliveryType === 'Delivery' && selectedAddress?.Pincode) {
+            const addressPincode = selectedAddress.Pincode.toString().trim();
+            const isValidPincode = pincodes.some(p => p.toString().trim() === addressPincode);
+            if (!isValidPincode) {
+                setInfoStatus('Sorry, we do not deliver to your pincode.');
+                handleAlertOpen(true);
+                return;
+            }
+        }
         if (Deliverytime === '' && DeliveryType === 'Delivery' && DeliveryTimeList.length !== 0) {
             setInfoStatus('Please choose delivery time');
             handleAlertOpen(true);
@@ -385,26 +398,17 @@ export default function ProductCheckout() {
             setInfoStatus('Please select date');
             handleAlertOpen(true);
         }
-          if (COD === 1 && PaymentType === '' && (gstNumber === 0 || gstNumber === null)) {
-            setInfoStatus('Please choose payment type');
-            handleAlertOpen(true);
-        }
         else {
-            if((COD === 1 && PaymentType === 'COD') || gstNumber === 1){
+            if (PaymentType === '') {
+                setInfoStatus('Please choose payment type');
+                handleAlertOpen(true);
+            } else if (PaymentType === 'COD') {
                 setOnlinePayment(false);
                 setAlertOpen(false);
                 PlaceOrder(0, '');
-            }
-            else if(COD === 0 && PaymentType === '' && gstNumber === 0 ){
-                setOnlinePayment(false);
-                setAlertOpen(false);
-                PlaceOrder(0, '');
-            }
-            else{
+            } else {
                 setOnlinePayment(true);
-                console.log("call");
-                //PlaceOrder();
-            }            
+            }
         }
     };
 
@@ -579,113 +583,88 @@ export default function ProductCheckout() {
                     </Box>
                 </Box>
             </Modal>
-            <Container maxWidth="lg" sx={{ px: { xs: 0, md: 3, lg: 5 }, py: { xs: 0, md: 3 } }}>
-                <Grid container spacing={4} style={{ padding: {xs: '0px', sm: '0px', md: '12px', lg: '20px', xl: '20px'} }}>
-                    {/* Left Section - Delivery Address */}
-                    <Grid item xs={12} md={8}>
-                        <Box sx={{ border: '1px solid #3BB77' }} padding={3} mb={2}>
-                            <Typography variant="h6" style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                                <CheckCircleIcon color="success" style={{ marginRight: '10px' }} />
-                                Delivery Address
-                                <Button variant="outlined" size="small"
-                                    onClick={handleChangeAddress}
-                                    sx={{
-                                        marginLeft: 'auto',
-                                        width: 'auto',
-                                        borderRadius: '3px',
-                                        padding: '2px 15px',
-                                        textTransform: 'none',
-                                        fontWeight: 'bold',
-                                        fontSize: '14px',
-                                        background: theme.palette.shadowcolorCode.main,
-                                        border: '1px solid',
-                                        borderColor: theme.palette.basecolorCode.main,
-                                        color: theme.palette.basecolorCode.main,
-                                        boxShadow: 'none',
-                                        '&:hover': {
-                                            border: '1px solid',
-                                            background: theme.palette.basecolorCode.main,
-                                            borderColor: theme.palette.basecolorCode.main,
-                                            color: theme.palette.whitecolorCode.main,
-                                            boxShadow: 'none',
-                                        }
-                                    }}>Change address</Button>
-                            </Typography>
+            <Container maxWidth="lg" sx={{ px: { xs: 2, md: 3, lg: 5 }, py: { xs: 3, md: 4 } }}>
+                <Typography variant="h4" sx={{ mb: 2, fontWeight: 700, letterSpacing: '0.02em' }}>Checkout</Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 4, maxWidth: 700 }}>Review your delivery details, choose the payment method you prefer, and confirm your order in a clean, easy checkout flow.</Typography>
 
-                            {/* Address Form */}
+                <Grid container spacing={4}>
+                    <Grid item xs={12} md={8}>
+                        <Paper sx={{ backgroundColor: theme.palette.background.paper, borderRadius: 3, boxShadow: '0 18px 60px rgba(15, 23, 42, 0.08)', border: '1px solid rgba(0,0,0,0.08)', p: { xs: 2, md: 3 }, mb: 3 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', mb: 2 }}>
+                                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, fontWeight: 700 }}>
+                                    <CheckCircleIcon color="success" /> Delivery Address
+                                </Typography>
+                                <Button variant="outlined" size="small" onClick={handleChangeAddress} sx={{ ml: 'auto', borderRadius: 3, px: 2.5, textTransform: 'none', fontWeight: 700, fontSize: 14, color: theme.palette.basecolorCode.main, borderColor: theme.palette.basecolorCode.main }}>
+                                    Change address
+                                </Button>
+                            </Box>
+
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={6}>
-                                    <TextField fullWidth label="Address-1" value={selectedAddress.Address1} />
+                                    <TextField fullWidth label="Address 1" value={address.Address1 || ''} InputProps={{ readOnly: true }} />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
-                                    <TextField fullWidth label="Address-2" value={selectedAddress.Address2} />
+                                    <TextField fullWidth label="Address 2" value={address.Address2 || ''} InputProps={{ readOnly: true }} />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
-                                    <TextField fullWidth label="City" value={selectedAddress.City} />
+                                    <TextField fullWidth label="City" value={address.City || ''} InputProps={{ readOnly: true }} />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
-                                    <TextField fullWidth label="Pincode" value={selectedAddress.Pincode} />
+                                    <TextField fullWidth label="Pincode" value={address.Pincode || ''} InputProps={{ readOnly: true }} />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <TextField fullWidth label="Landmark" value={selectedAddress.Landmark} />
+                                    <TextField fullWidth label="Landmark" value={address.LandMark || address.Landmark || ''} InputProps={{ readOnly: true }} />
                                 </Grid>
                             </Grid>
-                        </Box>
+                        </Paper>
 
-                        {/* Delivery type */}
-                        <Box padding={3} sx={{ paddingTop: 0 }}>
-                            <Typography variant="h6" style={{ display: 'flex', alignItems: 'center' }}>
-                                <CheckCircleIcon color="success" style={{ marginRight: '10px' }} />
-                               Delivery Type
+
+                        <Paper sx={{ backgroundColor: theme.palette.background.paper, borderRadius: 3, boxShadow: '0 18px 60px rgba(15, 23, 42, 0.08)', border: '1px solid rgba(0,0,0,0.08)', p: { xs: 2, md: 3 }, mb: 3 }}>
+                            <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2, fontWeight: 700 }}>
+                                <CheckCircleIcon color="success" /> Delivery Type
                             </Typography>
-
                             <RadioGroup>
-                                <FormControlLabel value="Pickup" control={<Radio checked={DeliveryType === 'Pickup' ? true : false} onChange={() => handleDeliveryType('Pickup')} size="small" />} label="Pickup" />
-                                <FormControlLabel value="Delivery" control={<Radio checked={DeliveryType === 'Delivery' ? true : false} onChange={() => handleDeliveryType('Delivery')} size="small" />} label="Delivery" />
+                                <FormControlLabel value="Pickup" control={<Radio checked={DeliveryType === 'Pickup'} onChange={() => handleDeliveryType('Pickup')} size="small" />} label="Pickup" />
+                                <FormControlLabel value="Delivery" control={<Radio checked={DeliveryType === 'Delivery'} onChange={() => handleDeliveryType('Delivery')} size="small" />} label="Delivery" />
                             </RadioGroup>
-                        </Box>
+                        </Paper>
 
-                        {/* Delivery Time and Date */}
-                        <Box padding={3} sx={{ paddingTop: 0 }}>
-                            <Typography variant="h6" style={{ display: 'flex', alignItems: 'center' }}>
-                                <CheckCircleIcon color="success" style={{ marginRight: '10px' }} />
-                                Delivery Time & Date
+                        <Paper sx={{ backgroundColor: theme.palette.background.paper, borderRadius: 3, boxShadow: '0 18px 60px rgba(15, 23, 42, 0.08)', border: '1px solid rgba(0,0,0,0.08)', p: { xs: 2, md: 3 }, mb: 3 }}>
+                            <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2, fontWeight: 700 }}>
+                                <CheckCircleIcon color="success" /> Delivery Time & Date
                             </Typography>
                             {DeliveryTypeState && (
-                                <RadioGroup style={{ marginTop: '10px' }}>
-                                    {DeliveryTimeList.map((item, index) => (
-                                        <FormControlLabel value={item.Id} control={<Radio onChange={() => handleDeliveryTime(item.Id, item.Deliverytime)} value={item.Id} size="small" />} label={item.Deliverytime} />
+                                <RadioGroup sx={{ mb: 2 }}>
+                                    {DeliveryTimeList.map((item) => (
+                                        <FormControlLabel key={item.Id} value={item.Id} control={<Radio onChange={() => handleDeliveryTime(item.Id, item.Deliverytime)} value={item.Id} size="small" />} label={item.Deliverytime} />
                                     ))}
                                 </RadioGroup>
-                            )}                           
+                            )}
                             <Calendar DateValue={DateValue} handleSelectDate={handleSelectDate} />
-                        </Box>
+                        </Paper>
 
-                        {/* Payment Method */}
-                        <Box padding={3} sx={{ paddingTop: 1 }}>
-                            <Typography variant="h6" style={{ display: 'flex', alignItems: 'center' }}>
-                                <CheckCircleIcon color="success" style={{ marginRight: '10px' }} />
-                                Payment
+                        <Paper sx={{ backgroundColor: theme.palette.background.paper, borderRadius: 3, boxShadow: '0 18px 60px rgba(15, 23, 42, 0.08)', border: '1px solid rgba(0,0,0,0.08)', p: { xs: 2, md: 3 } }}>
+                            <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2, fontWeight: 700 }}>
+                                <CheckCircleIcon color="success" /> Payment Method
                             </Typography>
                             <RadioGroup>
-                              {(gstNumber === '0' || (gstNumber === null && COD === 0)) && ( <FormControlLabel value="PayOnline" control={<Radio onChange={() => handlePaymentType('PayOnline')} size="small" />} label="Pay Online" />)}
-                              {(COD === 1 || gstNumber === '1')  && ( <FormControlLabel value="COD"control={<Radio onChange={() => handlePaymentType("COD")} size="small" />}label="Cash on Delivery"/>)}
+                                <FormControlLabel value="PayOnline" control={<Radio onChange={() => handlePaymentType('PayOnline')} size="small" />} label="Pay Online" />
+                                <FormControlLabel value="COD" control={<Radio onChange={() => handlePaymentType('COD')} size="small" />} label="Cash on Delivery" />
                             </RadioGroup>
 
-                            <Box sx={{ mt: 2, float: 'left' }}>
+                            <Box sx={{ mt: 3, display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' } }}>
                                 <Button
-                                    size="small"
+                                    size="large"
                                     variant="contained"
                                     onClick={handlePlaceOrder}
-                                    disabled={loading} // Disable the button while loading
+                                    disabled={loading}
                                     sx={{
-                                        marginLeft: 'auto',
-                                        float: 'right',
-                                        borderRadius: '5px',
-                                        padding: '5px 20px',
+                                        borderRadius: 3,
+                                        px: 4,
+                                        py: 1.5,
                                         textTransform: 'none',
-                                        fontWeight: 'bold',
-                                        fontSize: '14px',
+                                        fontWeight: 700,
+                                        fontSize: 14,
                                         border: '1px solid',
                                         borderColor: theme.palette.basecolorCode.main,
                                         background: theme.palette.basecolorCode.main,
@@ -693,10 +672,7 @@ export default function ProductCheckout() {
                                         boxShadow: 'none',
                                         '&:hover': {
                                             background: theme.palette.basecolorCode.main,
-                                            border: '1px solid',
                                             borderColor: theme.palette.basecolorCode.main,
-                                            color: theme.palette.whitecolorCode.main,
-                                            boxShadow: 'none',
                                         },
                                     }}
                                 >
@@ -707,124 +683,66 @@ export default function ProductCheckout() {
                                     )}
                                 </Button>
                             </Box>
-                        </Box>
+                        </Paper>
                     </Grid>
 
                     {/* Right Section - Order Summary */}
-                    <Grid item xs={12} md={4} sx={{ px: { xs: 1, md: 3 } }}>
-                        <Box sx={{ px: { xs: 1, md: 0 } }}>
-                        <Typography align='left' variant="h6">Order Summary</Typography>
-                        <Divider style={{ marginBottom: '20px' }} />
-                        {cartItems.map((product, index) => (
-                            <>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '7px' }}>
-                                    <Box
-                                        component="img"
-                                        sx={{
-                                            width: 50,
-                                            height: 50,
-                                            borderRadius: '50px',
-                                            marginRight: 0,
-                                        }}
-                                        src={ImagePathRoutes.ProductImagePath + product.Img0}
-                                        alt={product.Description}
-                                    />
-                                    <Box>
-                                        <Box align='left'>
-                                            <Typography variant="p"
-                                                sx={{
-                                                    fontSize: '12px',
-                                                    fontWeight: 'bold',
-                                                    overflow: 'hidden',
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: 2,
-                                                    WebkitBoxOrient: 'vertical',
-                                                    textOverflow: 'ellipsis',
-                                                    lineHeight: '12px',
-                                                    fontFamily: 'inherit',
-                                                    minHeight: '20px',
-                                                    width: '150px',
-                                                    marginRight: 0,
-                                                }}
-                                            >
-                                                {product.Description} <Typography variant="p" color="textSecondary"
-                                                    sx={{
-                                                        fontSize: '10px',
-                                                    }}
-                                                >
-                                                    ({product.UnitType})
-                                                </Typography>
-                                            </Typography>
+                    <Grid item xs={12} md={4}>
+                        <Paper sx={{ backgroundColor: theme.palette.background.paper, borderRadius: 3, boxShadow: '0 18px 60px rgba(15, 23, 42, 0.08)', border: '1px solid rgba(0,0,0,0.08)', p: { xs: 2, md: 3 } }}>
+                            <Typography variant="h6" sx={{ mb: 1.5, fontWeight: 700 }}>Order Summary</Typography>
+                            <Divider sx={{ mb: 3 }} />
+
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                {cartItems.map((product) => (
+                                    <Box key={product.Id} sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, p: 2, borderRadius: 3, backgroundColor: 'rgba(59, 183, 119, 0.05)' }}>
+                                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                                            <Box
+                                                component="img"
+                                                sx={{ width: 54, height: 54, borderRadius: 2, objectFit: 'cover' }}
+                                                src={ImagePathRoutes.ProductImagePath + product.Img0}
+                                                alt={product.Description}
+                                            />
+                                            <Box>
+                                                <Typography sx={{ fontSize: 14, fontWeight: 700, lineHeight: 1.3 }}>{product.Description}</Typography>
+                                                <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{product.UnitType}</Typography>
+                                                <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>Qty {product.item} × {product.Price.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>
+                                            </Box>
                                         </Box>
-                                        <Box>
-                                            <Typography align='left' variant="body2">Qty: {product.item} X {product.Price.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>
-                                            {/* <Typography variant="body2" align="right" style={{ color: 'green' }}>{product.totalMRP.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography> */}
-                                        </Box>
+                                        <Typography sx={{ fontSize: 14, fontWeight: 700, color: 'success.main', whiteSpace: 'nowrap' }}>{product.totalPrice.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>
                                     </Box>
-                                </Box>
-                                <Typography variant="body2" align="right" style={{ color: 'green' }}>{product.totalPrice.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>
+                                ))}
                             </Box>
-                            </>
-                        ))}
 
-                        <Divider style={{ margin: '20px 0' }} />
+                            <Divider sx={{ my: 3 }} />
 
-                        <Box align='left' sx={{ width: '100%' }}>
-                            <Grid container>
-                                <Grid item xs={8} sx={{ mt: 0.5 }}>
-                                    <Typography align='left' sx={{ fontSize: '14px', borderBottom: 'dashed 1px lightgray', display: 'inline' }} variant="body1">MRP Total Amount</Typography>
+                            <Grid container spacing={1.5}>
+                                <Grid item xs={7}>
+                                    <Typography variant="body2" color="text.secondary">MRP Total Amount</Typography>
                                 </Grid>
-                                <Grid item xs={4} sx={{ mt: 0.5 }}>
-                                    <Typography sx={{ fontSize: '14px' }} variant="body1" align="right">
-                                        {MRPAmount.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </Typography>
+                                <Grid item xs={5}>
+                                    <Typography variant="body2" align="right">{MRPAmount.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>
                                 </Grid>
-                                <Grid item xs={8} sx={{ mt: 0.5 }}>
-                                    <Typography align='left' sx={{ fontSize: '14px', borderBottom: 'dashed 1px lightgray', display: 'inline' }} variant="body1">Total Savings</Typography>
+                                <Grid item xs={7}>
+                                    <Typography variant="body2" color="success.main">Total Savings</Typography>
                                 </Grid>
-                                <Grid item xs={4} sx={{ mt: 0.5 }}>
-                                    <Typography sx={{ fontSize: '14px' }} variant="body1" align="right" color="green">
-                                        {SavingsAmount.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </Typography>
+                                <Grid item xs={5}>
+                                    <Typography variant="body2" align="right" color="success.main">{SavingsAmount.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>
                                 </Grid>
-                                <Grid item xs={8} sx={{ display: 'none', mt: 0.5 }}>
-                                    <Typography sx={{ fontSize: '14px', borderBottom: 'dashed 1px lightgray', display: 'inline' }} variant="body1">Extra discount</Typography>
+                                <Grid item xs={7}>
+                                    <Typography variant="body2" color="text.secondary">Delivery fee</Typography>
                                 </Grid>
-                                <Grid item xs={4} sx={{ display: 'none', mt: 0.5 }}>
-                                    <Typography sx={{ fontSize: '14px' }} variant="body1" align="right" color="green">
-                                        {ExtraDiscount.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={8} sx={{ display: 'none', mt: 0.5 }}>
-                                    <Typography sx={{ fontSize: '14px', borderBottom: 'dashed 1px lightgray', display: 'inline' }} variant="body1">Handling charge</Typography>
-                                </Grid>
-                                <Grid item xs={4} sx={{ display: 'none', mt: 0.5 }}>
-                                    <Typography sx={{ fontSize: '14px' }} variant="body1" align="right">
-                                        {HandlingCharge.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </Typography>
-                                </Grid>
-
-                                <Grid item xs={8} sx={{  mt: 0.5 }}>
-                                    <Typography sx={{ fontSize: '14px', borderBottom: 'dashed 1px lightgray', display: 'inline' }} variant="body1">Delivery fee:</Typography>
-                                </Grid>
-                                <Grid item xs={4} sx={{  mt: 0.5 }}>
-                                    <Typography sx={{ fontSize: '14px' }} variant="body1" align="right">
-                                        {deliverycharge.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </Typography>
-                                </Grid>
-
-                                <Grid item xs={8} sx={{ mt: 0.5 }}>
-                                    <Typography sx={{ fontSize: '14px', borderBottom: 'dashed 1px lightgray', display: 'inline' }} variant="body1">Total Amount</Typography>
-                                </Grid>
-                                <Grid item xs={4} sx={{ mt: 0.5 }}>
-                                    <Typography sx={{ fontSize: '14px' }} variant="body1" align="right">
-                                        {(TotalPrice + deliverycharge + HandlingCharge - ExtraDiscount).toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </Typography>
+                                <Grid item xs={5}>
+                                    <Typography variant="body2" align="right">{deliverycharge.toLocaleString('en-IN', { style: 'currency', currency: ServerURL.CURRENCY, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>
                                 </Grid>
                             </Grid>
-                        </Box>
-                        </Box>
+
+                            <Divider sx={{ my: 3 }} />
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Total Payable</Typography>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{formattedTotalPayable}</Typography>
+                            </Box>
+                        </Paper>
                     </Grid>
                 </Grid>
             </Container>
