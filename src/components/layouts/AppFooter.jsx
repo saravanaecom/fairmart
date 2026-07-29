@@ -5,7 +5,6 @@ import { Facebook } from '@mui/icons-material';
 import AppLogo from '../logo/AppLogo';
 import PlayStrore from '../../assets/play-store.svg';
 import { useTheme } from '@mui/material/styles';
-import { ServerURL } from '../../server/serverUrl';
 import QrImg from '../../assets/FairMart.png'
 
 const AppFooter = ({ CompanyDetails }) => {
